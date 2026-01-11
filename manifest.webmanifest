@@ -3,7 +3,7 @@
   "short_name": "展開予想盤",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
   "icons": [
