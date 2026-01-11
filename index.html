@@ -15,7 +15,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     
     <style>
         body { 
@@ -50,14 +50,6 @@
 
     <script type="text/babel">
         const { useState, useEffect, useCallback, useRef } = React;
-
-        // アイコンを表示させるための魔法
-        const LucideIcon = ({ name, className }) => {
-            useEffect(() => {
-                lucide.createIcons();
-            });
-            return <i className={`lucide-${name} ${className}`}></i>;
-        };
 
         const JRA_FRAME_TABLE = {
             5:  [1, 2, 3, 4, 5],
@@ -98,16 +90,6 @@
             const containerRef = useRef(null);
             const lastTouchRef = useRef(null);
             const dragStartPos = useRef({ x: 0, y: 0, horseX: 0, horseY: 0 });
-
-            // 初期化時にアイコン再描画
-            useEffect(() => {
-                lucide.createIcons();
-            }, []);
-            
-            // 画面更新ごとにも呼ぶ（念のため）
-            useEffect(() => {
-                lucide.createIcons();
-            });
 
             const initHorses = useCallback((count) => {
                 const frames = JRA_FRAME_TABLE[count];
@@ -218,10 +200,10 @@
                     <header className="flex items-center justify-between gap-1 p-2 bg-slate-900 shadow-xl z-20 h-16 border-b border-slate-800">
                         <div className="flex flex-1 gap-1 h-full">
                             <button onClick={undo} disabled={history.length === 0} className={`flex-1 flex items-center justify-center rounded-lg ${history.length === 0 ? 'opacity-20 bg-slate-800' : 'bg-slate-700 active:bg-slate-600'}`}>
-                                <i className="lucide-undo-2 scale-125"></i>
+                                <i className="fa-solid fa-rotate-left scale-125"></i>
                             </button>
                             <button onClick={redo} disabled={redoStack.length === 0} className={`flex-1 flex items-center justify-center rounded-lg ${redoStack.length === 0 ? 'opacity-20 bg-slate-800' : 'bg-slate-700 active:bg-slate-600'}`}>
-                                <i className="lucide-redo-2 scale-125"></i>
+                                <i className="fa-solid fa-rotate-right scale-125"></i>
                             </button>
                         </div>
                         <div className="px-4 text-center">
@@ -229,10 +211,10 @@
                         </div>
                         <div className="flex flex-1 gap-1 h-full">
                             <button onClick={() => setIsNameEditOpen(true)} className="flex-1 flex items-center justify-center bg-slate-700 rounded-lg active:bg-slate-600">
-                                <i className="lucide-type scale-125"></i>
+                                <i className="fa-solid fa-font scale-125"></i>
                             </button>
                             <button onClick={() => setIsSettingsOpen(true)} className="flex-1 flex items-center justify-center bg-slate-700 rounded-lg active:bg-slate-600">
-                                <i className="lucide-settings-2 scale-125"></i>
+                                <i className="fa-solid fa-gear scale-125"></i>
                             </button>
                         </div>
                     </header>
@@ -261,7 +243,7 @@
                         </div>
 
                         <button onClick={() => setTransform({ x: 0, y: 0, scale: 1 })} className="absolute bottom-8 right-8 p-5 bg-slate-900/90 backdrop-blur rounded-full shadow-2xl z-10 border border-slate-700 active:scale-90">
-                            <i className="lucide-maximize text-emerald-400 scale-150"></i>
+                            <i className="fa-solid fa-expand text-emerald-400 scale-150"></i>
                         </button>
                     </main>
 
@@ -270,7 +252,7 @@
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setIsSettingsOpen(false)}>
                             <div className="bg-slate-800 w-full max-w-sm rounded-2xl p-6 border border-slate-700 shadow-2xl" onClick={e => e.stopPropagation()}>
                                 <h2 className="text-lg font-bold mb-4 text-emerald-400 flex items-center gap-2">
-                                    <i className="lucide-settings-2 text-sm"></i> 出走頭数
+                                    <i className="fa-solid fa-gear text-sm"></i> 出走頭数
                                 </h2>
                                 <div className="grid grid-cols-4 gap-2">
                                     {Object.keys(JRA_FRAME_TABLE).map(numStr => {
@@ -299,7 +281,7 @@
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setIsNameEditOpen(false)}>
                             <div className="bg-slate-800 w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
                                 <h2 className="text-xl font-black mb-4 text-slate-100 flex items-center gap-2">
-                                    <i className="lucide-type text-emerald-400"></i> 馬名設定
+                                    <i className="fa-solid fa-font text-emerald-400"></i> 馬名設定
                                 </h2>
 
                                 <textarea 
