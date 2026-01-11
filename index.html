@@ -43,6 +43,26 @@
         textarea::-webkit-scrollbar {
             display: none;
         }
+        /* ボタンの押し心地を調整 */
+        .header-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem; /* rounded-xl */
+            background-color: rgb(51 65 85); /* bg-slate-700 */
+            transition: all 0.1s;
+        }
+        .header-btn:active {
+            background-color: rgb(71 85 105); /* bg-slate-600 */
+            transform: scale(0.95);
+        }
+        .header-btn.disabled {
+            opacity: 0.3;
+            background-color: rgb(30 41 59); /* bg-slate-800 */
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -211,31 +231,40 @@
 
             return (
                 <div className="flex flex-col h-screen text-white overflow-hidden font-sans select-none">
-                    <header className="flex items-center justify-between gap-1 p-2 bg-slate-900 shadow-xl z-20 h-16 border-b border-slate-800">
-                        <div className="flex flex-1 gap-1 h-full">
-                            <button onClick={undo} disabled={history.length === 0} className={`flex-1 flex items-center justify-center rounded-lg ${history.length === 0 ? 'opacity-20 bg-slate-800' : 'bg-slate-700 active:bg-slate-600'}`}>
+                    <header className="flex items-center justify-between gap-1 p-2 bg-slate-900 shadow-xl z-20 h-16 border-b border-slate-800 shrink-0">
+                        {/* 左：アンドゥ・リドゥ */}
+                        <div className="flex gap-2 h-full">
+                            <button onClick={undo} disabled={history.length === 0} className={`header-btn ${history.length === 0 ? 'disabled' : ''}`}>
                                 <i className="fa-solid fa-rotate-left scale-125"></i>
                             </button>
-                            <button onClick={redo} disabled={redoStack.length === 0} className={`flex-1 flex items-center justify-center rounded-lg ${redoStack.length === 0 ? 'opacity-20 bg-slate-800' : 'bg-slate-700 active:bg-slate-600'}`}>
+                            <button onClick={redo} disabled={redoStack.length === 0} className={`header-btn ${redoStack.length === 0 ? 'disabled' : ''}`}>
                                 <i className="fa-solid fa-rotate-right scale-125"></i>
                             </button>
                         </div>
-                        <div className="px-4 text-center">
-                            <div className="text-xl font-black text-slate-100 truncate tracking-tight">展開</div>
-                        </div>
-                        <div className="flex flex-1 gap-1 h-full">
-                            <button onClick={() => setIsNameEditOpen(true)} className="flex-1 flex items-center justify-center bg-slate-700 rounded-lg active:bg-slate-600">
-                                <i className="fa-solid fa-font scale-125"></i>
+                        
+                        {/* 中央：スペース */}
+                        <div className="flex-1"></div>
+
+                        {/* 右：設定・背景切替 */}
+                        <div className="flex gap-2 h-full">
+                            {/* 頭数設定 (List) */}
+                            <button onClick={() => setIsSettingsOpen(true)} className="header-btn">
+                                <i className="fa-solid fa-list-ol scale-125"></i>
                             </button>
-                            <button onClick={() => setIsSettingsOpen(true)} className="flex-1 flex items-center justify-center bg-slate-700 rounded-lg active:bg-slate-600">
-                                <i className="fa-solid fa-gear scale-125"></i>
+                            {/* 馬名設定 (Tag) */}
+                            <button onClick={() => setIsNameEditOpen(true)} className="header-btn">
+                                <i className="fa-solid fa-tag scale-125"></i>
+                            </button>
+                            {/* 背景切替 (Palette) */}
+                            <button onClick={toggleSurface} className="header-btn">
+                                <i className="fa-solid fa-palette scale-125"></i>
                             </button>
                         </div>
                     </header>
 
                     <main 
                         ref={containerRef} 
-                        className="flex-1 relative transition-colors duration-500" 
+                        className="flex-1 relative transition-colors duration-500 overflow-hidden" 
                         style={{ backgroundColor: SURFACE_COLORS[surfaceMode] }}
                         onTouchMove={handleTouchMove} 
                         onTouchEnd={handleTouchEnd}
@@ -261,17 +290,14 @@
                                 </div>
                             ))}
                         </div>
-
-                        <button onClick={toggleSurface} className="absolute bottom-8 right-8 p-5 bg-slate-900/90 backdrop-blur rounded-full shadow-2xl z-10 border border-slate-700 active:scale-90 transition-transform">
-                            <i className="fa-solid fa-layer-group text-slate-300 scale-125"></i>
-                        </button>
                     </main>
 
+                    {/* 頭数設定モーダル */}
                     {isSettingsOpen && (
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setIsSettingsOpen(false)}>
                             <div className="bg-slate-800 w-full max-w-sm rounded-2xl p-6 border border-slate-700 shadow-2xl" onClick={e => e.stopPropagation()}>
                                 <h2 className="text-lg font-bold mb-4 text-emerald-400 flex items-center gap-2">
-                                    <i className="fa-solid fa-gear text-sm"></i> 出走頭数
+                                    <i className="fa-solid fa-list-ol text-sm"></i> 出走頭数
                                 </h2>
                                 <div className="grid grid-cols-4 gap-2">
                                     {Object.keys(JRA_FRAME_TABLE).map(numStr => {
@@ -295,11 +321,12 @@
                         </div>
                     )}
 
+                    {/* 馬名設定モーダル */}
                     {isNameEditOpen && (
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setIsNameEditOpen(false)}>
                             <div className="bg-slate-800 w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
                                 <h2 className="text-xl font-black mb-4 text-slate-100 flex items-center gap-2">
-                                    <i className="fa-solid fa-font text-emerald-400"></i> 馬名設定
+                                    <i className="fa-solid fa-tag text-emerald-400"></i> 馬名設定
                                 </h2>
 
                                 <textarea 
